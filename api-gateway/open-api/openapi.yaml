@@ -1,0 +1,160 @@
+openapi: 3.0.1
+info:
+  title: Framedrop Upload API
+  description: API para upload e gerenciamento de vídeos.
+  version: 1.0.0
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+  params-only:
+    validateRequestBody: false
+    validateRequestParameters: true
+
+tags:
+  - name: "Upload"
+  - name: "Auth"
+  - name: "Videos"
+  - name: "StatusVideo"
+
+paths:
+  /api/uploads:
+    post:
+      tags: [Upload]
+      summary: Realizar upload de vídeo
+      operationId: uploadVideo
+      security:
+        - LambdaAuthorizer: []
+      x-amazon-apigateway-request-validator: "all"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Upload"
+      responses:
+        '200':
+          description: Vídeo enviado para processamento com sucesso.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Video was sent to processing"
+        '400':
+          description: Requisição inválida (arquivo não fornecido ou vazio).
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "No file provided"
+        '401':
+          description: Não autorizado.
+        '500':
+          description: Erro interno do servidor.
+      x-amazon-apigateway-integration:
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${nlb_dns_name}/api/uploads"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpc_link_id}"
+        passthroughBehavior: "when_no_match"
+
+  /api/videos/users/{id}:
+    get:
+      tags: [Videos]
+      summary: "Listar vídeos por Usuário"
+      operationId: getVideosByUserId
+      security:
+        - LambdaAuthorizer: []
+      x-amazon-apigateway-request-validator: "params-only"
+      parameters:
+        - name: id
+          in: path
+          description: ID do usuário
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de vídeos retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+      x-amazon-apigateway-integration:
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://${nlb_dns_name}/api/videos/users/{id}"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpc_link_id}"
+        passthroughBehavior: "when_no_match"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+
+  /api/videos/{id}:
+    patch:
+      tags: [StatusVideo]
+      summary: Atualizar status do vídeo
+      operationId: updateVideoStatus
+      security:
+        - LambdaAuthorizer: []
+      x-amazon-apigateway-request-validator: "all"
+      parameters:
+        - name: id
+          in: path
+          description: ID do vídeo (videoId)
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Novo status do vídeo.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoStatus'
+      responses:
+        '200':
+          description: Status atualizado com sucesso.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Video status updated"
+        '400':
+          description: Dados de entrada inválidos.
+        '404':
+          description: Vídeo não encontrado.
+      x-amazon-apigateway-integration:
+        type: "http_proxy"
+        httpMethod: "PATCH"
+        uri: "http://${nlb_dns_name}/api/videos/{id}"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpc_link_id}"
+        passthroughBehavior: "when_no_match"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+
+components:
+  schemas:
+    Upload:
+      $ref: './schemas/Upload.yaml'
+    VideoStatus:
+      $ref: './schemas/VideoStatus.yaml'
+
+    Video:
+      $ref: './schemas/Video.yaml'
+
+  securitySchemes:
+    LambdaAuthorizer:
+      type: "apiKey"
+      name: "Authorization"
+      in: header
+      x-amazon-apigateway-authtype: "custom"
+      x-amazon-apigateway-authorizer:
+        type: token
+        authorizerUri: "${authorizer_lambda_invoke_arn}"
+        identitySource: method.request.header.Authorization
