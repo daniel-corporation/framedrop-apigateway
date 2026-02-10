@@ -1,0 +1,8 @@
+type: object
+properties:
+  videoFile:
+    type: string
+    format: binary
+    description: O arquivo de vídeo a ser processado.
+  required:
+    - videoFile
