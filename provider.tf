@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "framedrop-infra"
-    key    = "terraform/infra/state.tfstate"
+    key    = "terraform/api/state.tfstate"
     region = "us-east-1"
   }
   required_providers {
