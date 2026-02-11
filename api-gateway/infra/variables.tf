@@ -16,11 +16,6 @@ variable "stage_name" {
 }
 
 variable "app_service_url" {
-  description = "URL do serviço (DNS do NLB)"
-  type        = string
-}
-
-variable "vpc_link_id" {
-  description = "ID do VPC Link para integração privada"
+  description = "DNS do Load Balancer (ALB)"
   type        = string
 }
