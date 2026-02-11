@@ -27,12 +27,6 @@ paths:
       security:
         - LambdaAuthorizer: []
       x-amazon-apigateway-request-validator: "all"
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              $ref: "#/components/schemas/Upload"
       responses:
         '200':
           description: Vídeo enviado para processamento com sucesso.
@@ -134,8 +128,6 @@ paths:
 
 components:
   schemas:
-    Upload:
-      $ref: './schemas/Upload.yaml'
     VideoStatus:
       $ref: './schemas/VideoStatus.yaml'
 

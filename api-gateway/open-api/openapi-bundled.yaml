@@ -25,12 +25,6 @@ paths:
       security:
         - LambdaAuthorizer: []
       x-amazon-apigateway-request-validator: all
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Upload'
       responses:
         '200':
           description: Vídeo enviado para processamento com sucesso.
@@ -131,15 +125,6 @@ paths:
           integration.request.path.id: method.request.path.id
 components:
   schemas:
-    Upload:
-      type: object
-      properties:
-        videoFile:
-          type: string
-          format: binary
-          description: O arquivo de vídeo a ser processado.
-        required:
-          - videoFile
     VideoStatus:
       type: object
       description: DTO para atualização de status.
