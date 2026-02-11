@@ -1,11 +1,11 @@
 resource "aws_api_gateway_rest_api" "api" {
   name = var.api_name
-
+  binary_media_types = ["multipart/form-data"]
   body = templatefile("${path.module}/../open-api/openapi-bundled.yaml", {
     authorizer_lambda_invoke_arn = var.authorizer_lambda_invoke_arn
     alb_dns_name                 = var.app_service_url
   })
-
+  
   endpoint_configuration {
     types = ["REGIONAL"]
   }
