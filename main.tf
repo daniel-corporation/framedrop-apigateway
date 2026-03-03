@@ -13,10 +13,9 @@ module "lambda-authorizer" {
 module "api_gateway" {
   source                       = "./api-gateway/infra"
   authorizer_lambda_invoke_arn = module.lambda-authorizer.authorizer_lambda_invoke_arn
-  app_service_url              = module.vpc_link.nlb_dns_name
-  vpc_link_id                  = module.vpc_link.vpc_link_id
+  app_service_url              = data.aws_lb.existing_alb.dns_name
 }
 
-module "vpc_link" {
-  source = "./vpc-link"
+data "aws_lb" "existing_alb" {
+  name = "framedrop-alb"
 }
