@@ -1,0 +1,9 @@
+type: object
+description: DTO para atualização de status.
+properties:
+  status:
+    type: string
+    description: Novo status a ser aplicado.
+    example: COMPLETED
+  required:
+    - status

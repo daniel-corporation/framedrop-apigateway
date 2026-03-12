@@ -1,0 +1,35 @@
+type: object
+description: Objeto de transferência de dados contendo detalhes do vídeo.
+properties:
+  videoId:
+    type: string
+    description: Identificador único do vídeo.
+  userId:
+    type: string
+    description: Identificador do usuário proprietário.
+  userName:
+    type: string
+    description: Nome do usuário.
+  videoPath:
+    type: string
+    description: Caminho ou URL de armazenamento do vídeo.
+  fileName:
+    type: string
+    description: Nome original do arquivo.
+  fileExtension:
+    type: string
+    description: Extensão do arquivo (ex. .mp4).
+  dateUploaded:
+    type: string
+    format: date-time
+    description: Data e hora do upload (ISO 8601).
+    example: '2023-10-27T14:30:00Z'
+  statusProcess:
+    type: string
+    description: Status atual do processamento (Enum StatusProcess).
+    example: PENDING
+    enum:
+     - PENDING
+     - PROCESSING
+     - COMPLETED
+     - FAILED
