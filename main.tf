@@ -1,6 +1,6 @@
 module "cognito" {
   source                = "./cognito"
-  cognito_domain_prefix = "framedrop-uplpad-videos"
+  cognito_domain_prefix = "framedrop-upload-videos"
 }
 
 module "lambda-authorizer" {
